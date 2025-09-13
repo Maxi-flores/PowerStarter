@@ -14,18 +14,20 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "incremental": true,
-    "baseUrl": ".",                       // 👈 Required for path alias
+    "baseUrl": ".",
+    "paths": {
+      "@ui/*": ["../../packages/ui/*"]
+    },
     "plugins": [
-      {
-        "name": "next"
-      }
+      { "name": "next" }
     ]
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     "next-env.d.ts",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "types.d.ts"
   ],
   "exclude": ["node_modules"]
 }
