@@ -1,0 +1,19 @@
+{
+  "name": "@powerstarter/ui",
+  "version": "0.0.1",
+  "main": "index.js",
+  "private": true,
+  "devDependencies": {
+    "@types/react": "^19.1.13",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  },
+  "peerDependencies": {
+    "@types/react": "^19.1.13",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  },
+  "dependencies": {
+    "@plasmicapp/react-web": "^0.2.400"
+  }
+}
