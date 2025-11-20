@@ -11,7 +11,6 @@ export default function Page() {
 
   return (
     <PlasmicComponent
-      loader={PLASMIC}
       component={componentName}
     />
   );
