@@ -1,28 +1,18 @@
-import { PlasmicComponent } from "@plasmicapp/loader-nextjs";
+"use client";
+
+import { usePathname } from "next/navigation";
+import { PlasmicComponent } from "@plasmicapp/loader-react";
 import { PLASMIC } from "../../components/plasmic-init";
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ slug?: string[] }>;
-}) {
-  const resolvedParams = await params;
-  const path = resolvedParams?.slug?.join("/") || "home";
+export default function Page() {
+  const pathname = usePathname();
 
-  const plasmicData = await PLASMIC.fetchComponentDataAsync(path);
-
-  if (!plasmicData) {
-    return <div>Plasmic page not found: {path}</div>;
-  }
-
-  const compName = plasmicData.entryCompMetas[0]?.name;
+  const componentName = pathname === "/" ? "Home" : pathname.replace("/", "");
 
   return (
     <PlasmicComponent
-      component={compName}
-      componentProps={{
-        path: "/" + (resolvedParams?.slug?.join("/") || ""),
-      }}
+      loader={PLASMIC}
+      component={componentName}
     />
   );
 }

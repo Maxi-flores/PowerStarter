@@ -1,7 +1,7 @@
 "use client";
 
 import { PlasmicRootProvider } from "@plasmicapp/loader-react";
-import { PLASMIC } from "@/components/plasmic-init";
+import { PLASMIC } from "../components/plasmic-init";
 
 export default function PlasmicRoot({ children }) {
   return (
