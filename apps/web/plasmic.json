@@ -1,33 +1,58 @@
 {
   "platform": "nextjs",
+
+  "srcDir": "components",
+  "defaultPlasmicDir": "components/plasmic",
+
   "code": {
     "lang": "ts",
     "scheme": "blackbox",
     "reactRuntime": "classic"
   },
+
   "style": {
     "scheme": "css-modules",
-    "defaultStyleCssFilePath": ""
+    "defaultStyleCssFilePath": "plasmic/plasmic__default_style.module.css"
   },
+
   "images": {
     "scheme": "public-files",
-    "publicDir": "../public",
+    "publicDir": "public",
     "publicUrlPrefix": "/"
   },
+
   "tokens": {
     "scheme": "theo",
-    "tokensFilePath": "plasmic-tokens.theo.json"
+    "tokensFilePath": "plasmic/plasmic-tokens.theo.json"
   },
-  "srcDir": "components",
-  "defaultPlasmicDir": "./plasmic",
-  "projects": [],
+
+  "projects": [
+    {
+      "projectId": "tcVv6SByt2AFVJXeXKzVaN",
+      "projectApiToken": "3N4pnodE98jJZ04AmCg4DH1tjM4pr02JBfV7Prg8BhYlVfvxksk1H9RBx3TQG2tPbUpYH268q4eREfwUv2neQ",
+      "projectName": "PowerStarter",
+      "version": "latest",
+
+      "cssFilePath": "plasmic/powerstarter/plasmic.module.css",
+      "projectModuleFilePath": "plasmic/powerstarter/plasmic.jsx",
+      "globalContextsFilePath": "plasmic/powerstarter/PlasmicGlobalContextsProvider.jsx",
+      "styleTokensProviderFilePath": "plasmic/powerstarter/PlasmicStyleTokensProvider.jsx"
+    }
+  ],
+
   "globalVariants": {
-    "variantGroups": []
+    "variantGroups": [
+      {
+        "id": "EpPsfinF5moi",
+        "name": "Screen",
+        "projectId": "tcVv6SByt2AFVJXeXKzVaN",
+        "contextFilePath": "plasmic/powerstarter/PlasmicGlobalVariant__Screen.jsx"
+      }
+    ]
   },
+
   "wrapPagesWithGlobalContexts": true,
-  "nextjsConfig": {
-    "pagesDir": "../pages"
-  },
-  "cliVersion": "0.1.342",
-  "$schema": "https://unpkg.com/@plasmicapp/cli@0.1.342/dist/plasmic.schema.json"
+
+  "cliVersion": "1.0.289",
+  "$schema": "https://unpkg.com/@plasmicapp/cli/dist/plasmic.schema.json"
 }

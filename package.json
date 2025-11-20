@@ -1,22 +1,20 @@
 {
-  "name": "powerstarter-root",
+  "name": "powerstarter",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "pnpm@10.16.0",
+  "description": "Next.js + Plasmic monorepo",
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm --filter web build",
+    "start": "pnpm --filter web start"
+  },
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
-  "scripts": {
-    "dev": "pnpm sync-plasmic && pnpm --filter web dev",
-    "sync-plasmic": "cd packages/ui && npx plasmic sync --projects ikZUwdc7As3DStD19u7teV",
-    "test": "echo \"No test specified\" && exit 1"
-  },
-  "devDependencies": {
-    "@plasmicapp/cli": "^0.1.342",
-    "typescript": "^5.9.2"
-  },
-  "dependencies": {
-    "@plasmicapp/react-web": "^0.2.400"
-  }
+  "main": "index.js",
+  "devDependencies": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

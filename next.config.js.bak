@@ -1,13 +1,16 @@
 /** @type {import('next').NextConfig} */
-const path = require('path');
+
+const path = require("path");
 
 const nextConfig = {
   experimental: {
     externalDir: true
   },
-  outputFileTracingRoot: path.join(__dirname, '../../'),
   webpack(config) {
-    config.resolve.alias['@ui'] = path.resolve(__dirname, '../../packages/ui');
+    config.resolve.alias["@ui"] = path.resolve(
+      __dirname,
+      "packages/ui"
+    );
     return config;
   }
 };
