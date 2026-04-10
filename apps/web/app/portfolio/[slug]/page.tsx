@@ -20,6 +20,7 @@ import type {
   UnityDisplayData,
 } from "@ui/src/types/instance-result";
 import type { Instance } from "@prisma/client";
+import { SITE_URL } from "@/lib/constants";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -77,9 +78,7 @@ export async function generateMetadata(
   const description =
     `Unity Level ${level} · Score ${score} · BMS Health ${health}% · SoC ${soc}%`;
 
-  const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://therockettree.com";
-  const pageUrl = `${siteUrl}/portfolio/${params.slug}`;
+  const pageUrl = `${SITE_URL}/portfolio/${params.slug}`;
 
   return {
     title,

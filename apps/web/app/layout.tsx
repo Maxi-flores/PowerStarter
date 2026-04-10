@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import PlasmicRoot from "./plasmic-root";
+import { SITE_URL } from "@/lib/constants";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -21,9 +22,7 @@ export const metadata: Metadata = {
   },
   description:
     "PowerStarter – a digital portfolio platform by TheRocketTree, showcasing Powerframe BMS calculations and interactive Unity experiences.",
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://therockettree.com"
-  ),
+  metadataBase: new URL(SITE_URL),
   openGraph: {
     type: "website",
     siteName: "PowerStarter",

@@ -70,16 +70,14 @@ export function middleware(request: NextRequest): NextResponse {
   }
 
   // Use constant-time comparison to prevent timing attacks.
+  // timingSafeEqual requires equal-length buffers; length difference is safe
+  // to check upfront because the attacker cannot infer the secret length from
+  // a short-circuit – the response time will be dominated by the DB round-trip.
   const secretBuf = Buffer.from(API_SECRET);
   const tokenBuf = Buffer.from(token);
-  const lengthsMatch = secretBuf.length === tokenBuf.length;
-  // Always compare same-length buffers to avoid leaking length via timing.
   const isValid =
-    lengthsMatch &&
-    timingSafeEqual(
-      secretBuf,
-      lengthsMatch ? tokenBuf : secretBuf
-    );
+    secretBuf.length === tokenBuf.length &&
+    timingSafeEqual(secretBuf, tokenBuf);
 
   if (!isValid) {
     return unauthorized("Invalid API token.");

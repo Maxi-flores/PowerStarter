@@ -11,10 +11,11 @@
 import { defineConfig } from "prisma/config";
 
 // DATABASE_URL is validated at runtime in src/client.ts when the Prisma
-// client is first instantiated.  Do not throw here – this file is also
-// evaluated by `prisma generate`, which does not need a live DB URL.
+// client is first instantiated.  During `prisma generate` (which evaluates
+// this file but does not connect to the database) we fall back to a
+// placeholder URL to satisfy the parser without opening a real connection.
 export default defineConfig({
   datasource: {
-    url: process.env.DATABASE_URL ?? "",
+    url: process.env.DATABASE_URL ?? "postgresql://placeholder@localhost:5432/placeholder",
   },
 });
