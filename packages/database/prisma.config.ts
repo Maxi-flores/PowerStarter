@@ -10,8 +10,16 @@
 
 import { defineConfig } from "prisma/config";
 
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+  throw new Error(
+    "[database] DATABASE_URL is not set. " +
+      "Provide a valid PostgreSQL connection string before running migrations."
+  );
+}
+
 export default defineConfig({
   datasource: {
-    url: process.env.DATABASE_URL!,
+    url: databaseUrl,
   },
 });

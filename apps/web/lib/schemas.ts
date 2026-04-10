@@ -3,7 +3,7 @@
  * InstanceResult family of interfaces from @powerstarter/ui.
  *
  * Import these schemas in API route handlers to validate untrusted input
- * before touching the in-memory store or any persistent database.
+ * before writing to the database.
  */
 
 import { z } from "zod";

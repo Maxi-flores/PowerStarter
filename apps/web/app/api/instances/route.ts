@@ -17,7 +17,7 @@ import type { Instance, Prisma } from "@prisma/client";
 
 import { CreateInstanceBodySchema, type CreateInstanceBody } from "@/lib/schemas";
 import { bmsToUnity } from "@/lib/bms-to-unity";
-import { prisma } from "@powerstarter/database";
+import { prisma, fromJson } from "@powerstarter/database";
 import type {
   InstanceResult,
   BmsMetrics,
@@ -39,9 +39,9 @@ function jsonError(
 /**
  * Maps a Prisma `Instance` row back to the shared `InstanceResult` shape.
  *
- * Prisma stores `bms` and `unity` as opaque `Json` columns; we cast them
- * back to their typed shapes here.  The Zod schema already validated the
- * data on the way in, so the cast is safe.
+ * Prisma stores `bms` and `unity` as opaque `Json` columns; we use the
+ * centralised `fromJson` helper from @powerstarter/database to cast them.
+ * Data integrity is guaranteed by the Zod validation performed on write.
  */
 function rowToInstanceResult(row: Instance): InstanceResult {
   return {
@@ -50,8 +50,8 @@ function rowToInstanceResult(row: Instance): InstanceResult {
     status: row.status,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
-    bms: (row.bms as unknown) as BmsMetrics ?? null,
-    unity: (row.unity as unknown) as UnityDisplayData ?? null,
+    bms: fromJson<BmsMetrics>(row.bms),
+    unity: fromJson<UnityDisplayData>(row.unity),
     tags: row.tags,
   };
 }
@@ -84,29 +84,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   // 3. Derive UnityDisplayData from the validated BMS metrics
   const unity = bmsToUnity(body.name, body.bms);
 
-  // 4. Persist via Prisma upsert (idempotent on id).
+  // 4. Persist via Prisma create.
+  //    Each POST from the BMS creates a new timestamped record.
   //    BmsMetrics and UnityDisplayData are plain JSON-serialisable objects;
   //    casting to Prisma.InputJsonValue satisfies the Json column constraint.
-  const id = crypto.randomUUID();
   const now = new Date();
   const bmsJson = body.bms as unknown as Prisma.InputJsonValue;
   const unityJson = unity as unknown as Prisma.InputJsonValue;
 
-  const row = await prisma.instance.upsert({
-    where: { id },
-    create: {
-      id,
+  const row = await prisma.instance.create({
+    data: {
+      id: crypto.randomUUID(),
       name: body.name,
       status: body.status,
       createdAt: now,
-      updatedAt: now,
-      bms: bmsJson,
-      unity: unityJson,
-      tags: body.tags ?? [],
-    },
-    update: {
-      name: body.name,
-      status: body.status,
       updatedAt: now,
       bms: bmsJson,
       unity: unityJson,

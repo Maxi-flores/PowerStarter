@@ -8,7 +8,7 @@
  */
 
 import type { Metadata } from "next";
-import { prisma } from "@powerstarter/database";
+import { prisma, fromJson } from "@powerstarter/database";
 import type { Instance } from "@prisma/client";
 import type {
   InstanceResult,
@@ -40,8 +40,8 @@ function rowToInstanceResult(row: Instance): InstanceResult {
     status: row.status,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
-    bms: (row.bms as unknown) as BmsMetrics ?? null,
-    unity: (row.unity as unknown) as UnityDisplayData ?? null,
+    bms: fromJson<BmsMetrics>(row.bms),
+    unity: fromJson<UnityDisplayData>(row.unity),
     tags: row.tags,
   };
 }

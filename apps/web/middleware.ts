@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { timingSafeEqual } from "crypto";
 
 /**
  * Routes under /api/instances require a valid bearer token so that only
@@ -68,7 +69,19 @@ export function middleware(request: NextRequest): NextResponse {
     return unauthorized("Missing or malformed Authorization header.");
   }
 
-  if (token !== API_SECRET) {
+  // Use constant-time comparison to prevent timing attacks.
+  const secretBuf = Buffer.from(API_SECRET);
+  const tokenBuf = Buffer.from(token);
+  const lengthsMatch = secretBuf.length === tokenBuf.length;
+  // Always compare same-length buffers to avoid leaking length via timing.
+  const isValid =
+    lengthsMatch &&
+    timingSafeEqual(
+      secretBuf,
+      lengthsMatch ? tokenBuf : secretBuf
+    );
+
+  if (!isValid) {
     return unauthorized("Invalid API token.");
   }
 

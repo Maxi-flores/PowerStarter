@@ -8,6 +8,7 @@
  */
 
 export { prisma } from "./src/client";
+export { fromJson } from "./src/json-cast";
 
 // Re-export generated Prisma types so consumers don't need to import from
 // "@prisma/client" directly.

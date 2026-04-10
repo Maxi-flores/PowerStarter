@@ -16,6 +16,7 @@
 
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 
 const globalRef = global as typeof global & { __prisma?: PrismaClient };
 
@@ -28,7 +29,7 @@ if (!globalRef.__prisma) {
     );
   }
 
-  const adapter = new PrismaPg({ connectionString });
+  const adapter = new PrismaPg(new Pool({ connectionString }));
   globalRef.__prisma = new PrismaClient({
     adapter,
     log:
