@@ -14,7 +14,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
 
-import { CreateInstanceBodySchema } from "@/lib/schemas";
+import { CreateInstanceBodySchema, type CreateInstanceBody } from "@/lib/schemas";
 import { bmsToUnity } from "@/lib/bms-to-unity";
 import { upsertInstance, listInstances } from "@/lib/instance-store";
 import type { InstanceResult } from "@ui/src/types/instance-result";
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   // 2. Validate against the Zod schema (ensures the payload matches BmsMetrics
   //    and the wrapper fields exactly before we touch the store).
-  let body: ReturnType<typeof CreateInstanceBodySchema.parse>;
+  let body: CreateInstanceBody;
   try {
     body = CreateInstanceBodySchema.parse(rawBody);
   } catch (err) {

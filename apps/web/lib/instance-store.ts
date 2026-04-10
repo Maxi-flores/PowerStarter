@@ -14,15 +14,15 @@
 import type { InstanceResult } from "@ui/src/types/instance-result";
 
 /** Module-level singleton – survives hot-reloads in dev via global reference. */
-const globalStore = global as typeof global & {
+const globalRef = global as typeof global & {
   __instanceStore?: Map<string, InstanceResult>;
 };
 
-if (!globalStore.__instanceStore) {
-  globalStore.__instanceStore = new Map<string, InstanceResult>();
+if (!globalRef.__instanceStore) {
+  globalRef.__instanceStore = new Map<string, InstanceResult>();
 }
 
-const store: Map<string, InstanceResult> = globalStore.__instanceStore;
+const store: Map<string, InstanceResult> = globalRef.__instanceStore;
 
 // ---------------------------------------------------------------------------
 // Public API

@@ -6,6 +6,10 @@ import { NextRequest, NextResponse } from "next/server";
  *
  * Authorization header format:
  *   Authorization: Bearer <POWERSTARTER_API_SECRET>
+ *
+ * The secret is read once at module load time.  If it is not set the
+ * middleware refuses ALL write requests immediately, so the misconfiguration
+ * is surfaced on the first request rather than silently passing through.
  */
 
 /** Paths that require authentication (write operations only). */
@@ -13,6 +17,21 @@ const PROTECTED_PREFIXES = ["/api/instances"];
 
 /** HTTP methods considered "write" operations. */
 const WRITE_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
+
+/**
+ * Read the secret once at module initialisation.
+ * `undefined` means the server was started without the variable set;
+ * all write requests will be blocked until it is provided.
+ */
+const API_SECRET: string | undefined = process.env.POWERSTARTER_API_SECRET;
+
+if (!API_SECRET) {
+  console.error(
+    "[middleware] POWERSTARTER_API_SECRET is not set. " +
+      "All write requests to /api/instances will be rejected until this " +
+      "environment variable is configured."
+  );
+}
 
 function unauthorized(message: string): NextResponse {
   return NextResponse.json(
@@ -38,11 +57,7 @@ export function middleware(request: NextRequest): NextResponse {
     return NextResponse.next();
   }
 
-  const apiSecret = process.env.POWERSTARTER_API_SECRET;
-  if (!apiSecret) {
-    console.error(
-      "[middleware] POWERSTARTER_API_SECRET is not set – all write requests are blocked."
-    );
+  if (!API_SECRET) {
     return unauthorized("Server is not configured for authenticated writes.");
   }
 
@@ -53,7 +68,7 @@ export function middleware(request: NextRequest): NextResponse {
     return unauthorized("Missing or malformed Authorization header.");
   }
 
-  if (token !== apiSecret) {
+  if (token !== API_SECRET) {
     return unauthorized("Invalid API token.");
   }
 
