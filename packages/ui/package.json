@@ -1,7 +1,12 @@
 {
   "name": "@powerstarter/ui",
   "version": "0.0.1",
-  "main": "index.js",
+  "main": "index.ts",
+  "types": "index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./types": "./src/types/instance-result.ts"
+  },
   "private": true,
   "devDependencies": {
     "@types/react": "^19.1.13",
