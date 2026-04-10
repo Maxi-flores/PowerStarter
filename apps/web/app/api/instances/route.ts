@@ -4,7 +4,7 @@
  * POST  (authenticated – Bearer token required via middleware)
  *   Accepts a validated BmsMetrics payload from the Powerframe BMS,
  *   derives the Unity display data via `bmsToUnity`, builds an
- *   InstanceResult, persists it to the store, and returns 201.
+ *   InstanceResult, persists it to the database via Prisma, and returns 201.
  *
  * GET   (public – read-only for the Unity game interface)
  *   Returns all stored instances as a flat JSON array, newest first.
@@ -13,11 +13,16 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
+import type { Instance, Prisma } from "@prisma/client";
 
 import { CreateInstanceBodySchema, type CreateInstanceBody } from "@/lib/schemas";
 import { bmsToUnity } from "@/lib/bms-to-unity";
-import { upsertInstance, listInstances } from "@/lib/instance-store";
-import type { InstanceResult } from "@ui/src/types/instance-result";
+import { prisma } from "@powerstarter/database";
+import type {
+  InstanceResult,
+  BmsMetrics,
+  UnityDisplayData,
+} from "@ui/src/types/instance-result";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -29,6 +34,26 @@ function jsonError(
   details?: unknown
 ): NextResponse {
   return NextResponse.json({ error: message, details }, { status });
+}
+
+/**
+ * Maps a Prisma `Instance` row back to the shared `InstanceResult` shape.
+ *
+ * Prisma stores `bms` and `unity` as opaque `Json` columns; we cast them
+ * back to their typed shapes here.  The Zod schema already validated the
+ * data on the way in, so the cast is safe.
+ */
+function rowToInstanceResult(row: Instance): InstanceResult {
+  return {
+    id: row.id,
+    name: row.name,
+    status: row.status,
+    createdAt: row.createdAt.toISOString(),
+    updatedAt: row.updatedAt.toISOString(),
+    bms: (row.bms as unknown) as BmsMetrics ?? null,
+    unity: (row.unity as unknown) as UnityDisplayData ?? null,
+    tags: row.tags,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -45,7 +70,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   // 2. Validate against the Zod schema (ensures the payload matches BmsMetrics
-  //    and the wrapper fields exactly before we touch the store).
+  //    and the wrapper fields exactly before we touch the database).
   let body: CreateInstanceBody;
   try {
     body = CreateInstanceBodySchema.parse(rawBody);
@@ -59,22 +84,37 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   // 3. Derive UnityDisplayData from the validated BMS metrics
   const unity = bmsToUnity(body.name, body.bms);
 
-  // 4. Build the full InstanceResult
-  const now = new Date().toISOString();
-  const record: InstanceResult = {
-    id: crypto.randomUUID(),
-    name: body.name,
-    status: body.status,
-    createdAt: now,
-    updatedAt: now,
-    bms: body.bms,
-    unity,
-    tags: body.tags,
-  };
+  // 4. Persist via Prisma upsert (idempotent on id).
+  //    BmsMetrics and UnityDisplayData are plain JSON-serialisable objects;
+  //    casting to Prisma.InputJsonValue satisfies the Json column constraint.
+  const id = crypto.randomUUID();
+  const now = new Date();
+  const bmsJson = body.bms as unknown as Prisma.InputJsonValue;
+  const unityJson = unity as unknown as Prisma.InputJsonValue;
 
-  // 5. Persist
-  upsertInstance(record);
+  const row = await prisma.instance.upsert({
+    where: { id },
+    create: {
+      id,
+      name: body.name,
+      status: body.status,
+      createdAt: now,
+      updatedAt: now,
+      bms: bmsJson,
+      unity: unityJson,
+      tags: body.tags ?? [],
+    },
+    update: {
+      name: body.name,
+      status: body.status,
+      updatedAt: now,
+      bms: bmsJson,
+      unity: unityJson,
+      tags: body.tags ?? [],
+    },
+  });
 
+  const record = rowToInstanceResult(row);
   return NextResponse.json(record, { status: 201 });
 }
 
@@ -83,7 +123,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 // ---------------------------------------------------------------------------
 
 export async function GET(): Promise<NextResponse> {
-  const instances = listInstances();
+  const rows = await prisma.instance.findMany({
+    orderBy: { updatedAt: "desc" },
+  });
+
+  const instances: InstanceResult[] = rows.map(rowToInstanceResult);
 
   return NextResponse.json(instances, {
     status: 200,

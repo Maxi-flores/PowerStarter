@@ -11,7 +11,9 @@
   "dependencies": {
     "@plasmicapp/host": "1.0.228",
     "@plasmicapp/loader-react": "^1.0.403",
+    "@powerstarter/database": "workspace:*",
     "@powerstarter/ui": "workspace:*",
+    "@prisma/client": "^7.7.0",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.554.0",
     "next": "14.2.33",
