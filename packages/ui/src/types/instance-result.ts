@@ -116,4 +116,8 @@ export interface InstanceResult {
   unity: UnityDisplayData | null;
   /** Optional free-form tags for filtering/grouping in the portfolio UI. */
   tags?: string[];
+  /** Whether this instance is published to the Community feed. */
+  isPublic?: boolean;
+  /** URL-safe slug for the shareable portfolio link. Set when published. */
+  slug?: string | null;
 }

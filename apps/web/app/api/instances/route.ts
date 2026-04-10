@@ -53,6 +53,8 @@ function rowToInstanceResult(row: Instance): InstanceResult {
     bms: fromJson<BmsMetrics>(row.bms),
     unity: fromJson<UnityDisplayData>(row.unity),
     tags: row.tags,
+    isPublic: row.isPublic,
+    slug: row.slug,
   };
 }
 

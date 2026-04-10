@@ -53,5 +53,12 @@ model Instance {
   /// Optional free-form tags for filtering in the portfolio UI.
   tags String[]
 
+  /// Whether this instance is published to the Community feed.
+  isPublic  Boolean @default(false) @map("is_public")
+
+  /// URL-safe slug for the shareable portfolio link (e.g. "pack-a-rack-3").
+  /// Unique across all instances; null until the owner publishes.
+  slug      String? @unique
+
   @@map("instances")
 }

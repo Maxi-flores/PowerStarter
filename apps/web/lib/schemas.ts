@@ -89,3 +89,40 @@ export const CreateInstanceBodySchema = z.object({
 });
 
 export type CreateInstanceBody = z.infer<typeof CreateInstanceBodySchema>;
+
+// ---------------------------------------------------------------------------
+// PATCH /api/instances/[id] – partial update body
+// ---------------------------------------------------------------------------
+
+/**
+ * URL-safe slug validator: lowercase alphanumeric + hyphens, 3-80 chars.
+ */
+const SlugSchema = z
+  .string()
+  .min(3)
+  .max(80)
+  .regex(
+    /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+    "Slug must be lowercase alphanumeric words separated by hyphens."
+  );
+
+/**
+ * Shape of the JSON body for PATCH /api/instances/[id].
+ * At least one field must be provided.
+ */
+export const PatchInstanceBodySchema = z
+  .object({
+    /** Publish or unpublish the instance to the Community feed. */
+    isPublic: z.boolean().optional(),
+    /**
+     * URL-safe slug for the shareable portfolio link.
+     * Auto-generated from the instance name when `isPublic` is set to true
+     * and no explicit slug is supplied.
+     */
+    slug: SlugSchema.optional(),
+  })
+  .refine((data) => data.isPublic !== undefined || data.slug !== undefined, {
+    message: "At least one of isPublic or slug must be provided.",
+  });
+
+export type PatchInstanceBody = z.infer<typeof PatchInstanceBodySchema>;

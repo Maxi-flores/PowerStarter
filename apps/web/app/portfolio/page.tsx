@@ -15,6 +15,7 @@ import type {
   BmsMetrics,
   UnityDisplayData,
 } from "@ui/src/types/instance-result";
+import { PublishToggle } from "./PublishToggle";
 
 // ---------------------------------------------------------------------------
 // Metadata
@@ -43,6 +44,8 @@ function rowToInstanceResult(row: Instance): InstanceResult {
     bms: fromJson<BmsMetrics>(row.bms),
     unity: fromJson<UnityDisplayData>(row.unity),
     tags: row.tags,
+    isPublic: row.isPublic,
+    slug: row.slug,
   };
 }
 
@@ -164,6 +167,13 @@ function InstanceCard({ instance }: { instance: InstanceResult }) {
           ))}
         </footer>
       )}
+
+      {/* Publish toggle */}
+      <PublishToggle
+        instanceId={instance.id}
+        initialIsPublic={instance.isPublic ?? false}
+        slug={instance.slug}
+      />
 
       {/* Timestamp */}
       <p className="mt-auto text-[10px] text-slate-600">Updated {updatedAt}</p>
