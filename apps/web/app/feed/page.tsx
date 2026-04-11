@@ -1,4 +1,4 @@
-import { getLatestRecords, totalProcessed, plannerActive } from "@/lib/feed-store";
+import { getLatestRecords, getTotalProcessed, isPlannerActive } from "@/lib/feed-store";
 import type { FeedResponse } from "@/lib/feed-types";
 import FeedList from "./FeedList";
 import ProjectSidebar from "./ProjectSidebar";
@@ -11,8 +11,8 @@ function getFeedData(): FeedResponse {
   // When @trt/db is available, swap this for a Prisma/ORM query.
   return {
     records: getLatestRecords(20),
-    totalProcessed,
-    plannerActive,
+    totalProcessed: getTotalProcessed(),
+    plannerActive: isPlannerActive(),
   };
 }
 

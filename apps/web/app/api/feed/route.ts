@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { getLatestRecords, ingestRecord, totalProcessed, plannerActive } from "@/lib/feed-store";
+import { getLatestRecords, ingestRecord, getTotalProcessed, isPlannerActive } from "@/lib/feed-store";
 import type { VisualStateRecord, FeedResponse } from "@/lib/feed-types";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   const records = getLatestRecords(20);
-  const body: FeedResponse = { records, totalProcessed, plannerActive };
+  const body: FeedResponse = { records, totalProcessed: getTotalProcessed(), plannerActive: isPlannerActive() };
   return NextResponse.json(body);
 }
 

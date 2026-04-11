@@ -38,17 +38,27 @@ const SEED: VisualStateRecord[] = [
 // Mutable store — newest first
 export const feedStore: VisualStateRecord[] = [...SEED];
 
-// Stats
-export let totalProcessed = SEED.length;
-export let plannerActive = true;
+// Stats (private, accessed through getters)
+let _totalProcessed = SEED.length;
+let _plannerActive = true;
 
 /** Return the latest `limit` records (newest-first) */
 export function getLatestRecords(limit = 20): VisualStateRecord[] {
   return feedStore.slice(0, limit);
 }
 
+/** Total number of records ever ingested */
+export function getTotalProcessed(): number {
+  return _totalProcessed;
+}
+
+/** Whether the RootPlanner is active */
+export function isPlannerActive(): boolean {
+  return _plannerActive;
+}
+
 /** Ingest a new record (prepend so newest is first) */
 export function ingestRecord(record: VisualStateRecord): void {
   feedStore.unshift(record);
-  totalProcessed += 1;
+  _totalProcessed += 1;
 }
