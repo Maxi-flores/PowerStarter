@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "pnpm --filter web dev",
     "build": "pnpm --filter web build",
-    "start": "pnpm --filter web start"
+    "start": "pnpm --filter web start",
+    "dev:bms": "pnpm --filter powerstarter dev",
+    "build:bms": "pnpm --filter powerstarter build",
+    "start:bms": "pnpm --filter powerstarter start"
   },
   "workspaces": [
     "apps/*",
