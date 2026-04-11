@@ -13,6 +13,9 @@ interface BmsStore {
 }
 
 declare global {
+  // `var` is required here so that TypeScript merges this declaration with the
+  // Node.js global object (using `let`/`const` inside a `declare global` block
+  // is not allowed and would not attach to `global` at runtime).
   // eslint-disable-next-line no-var
   var __bmsStore: BmsStore | undefined;
 }
@@ -41,8 +44,7 @@ export function pushBmsEvent(payload: BmsPushPayload): BmsEvent {
   store.batteryHistory = [
     ...store.batteryHistory.slice(-(METRICS_WINDOW - 1)),
     payload.state.battery ?? 100,
-  ];
-  store.latestState = { ...payload.state, timestamp: Date.now() };
+  ];  store.latestState = { ...payload.state, timestamp: Date.now() };
 
   const event: BmsEvent = {
     id: randomUUID(),

@@ -53,7 +53,7 @@ export default function BmsPost({ event }: BmsPostProps) {
             <span>{formatRelative(event.timestamp)}</span>
           </p>
         </div>
-        <span className="font-mono text-[10px] text-zinc-700 shrink-0">#{event.id.slice(0, 8)}</span>
+        <span className="font-mono text-[10px] text-zinc-700 shrink-0">#{event.id.length >= 8 ? event.id.slice(0, 8) : event.id}</span>
       </div>
 
       {/* Media slot: live SVG metrics graph or Unity WebGL placeholder */}

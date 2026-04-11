@@ -9,6 +9,9 @@ interface BmsMetricsGraphProps {
   height?: number;
 }
 
+const DEFAULT_CPU = 0;
+const DEFAULT_BATTERY = 100;
+
 function buildPath(values: number[], w: number, h: number): string {
   if (values.length < 2) return "";
   const step = w / (values.length - 1);
@@ -34,8 +37,8 @@ export default function BmsMetricsGraph({
   const cpuPath = buildPath(cpuHistory, width, height);
   const batteryPath = buildPath(batteryHistory, width, height);
 
-  const latestCpu = cpuHistory.at(-1) ?? 0;
-  const latestBattery = batteryHistory.at(-1) ?? 100;
+  const latestCpu = cpuHistory.at(-1) ?? DEFAULT_CPU;
+  const latestBattery = batteryHistory.at(-1) ?? DEFAULT_BATTERY;
 
   return (
     <div className="relative w-full bg-zinc-900 overflow-hidden" style={{ aspectRatio: `${width}/${height}` }}>
