@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint . --ext .js,.ts,.jsx,.tsx"
+    "lint": "eslint . --ext .js,.ts,.jsx,.tsx",
+    "docs:generate": "node scripts/docs-generate.mjs"
   },
   "dependencies": {
     "@plasmicapp/host": "1.0.228",
