@@ -133,10 +133,10 @@ export type RootLayoutProps = z.infer<typeof RootLayoutPropsSchema>;
 export const ScreenValueSchema = z.enum(["mobileOnly"]);
 export type ScreenValue = z.infer<typeof ScreenValueSchema>;
 
-export const ScreenBreakpointSchema = z.record(
-  ScreenValueSchema,
-  z.string()
-);
+/** Generic map of screen-value name → media query string */
+export const ScreenBreakpointSchema = z.object({
+  mobileOnly: z.string(),
+});
 export type ScreenBreakpoint = z.infer<typeof ScreenBreakpointSchema>;
 
 /** The concrete breakpoint map used by useScreenVariants */
@@ -165,7 +165,7 @@ export const TheoTokenEntrySchema = z.object({
 export type TheoTokenEntry = z.infer<typeof TheoTokenEntrySchema>;
 
 export const TheoTokensSchema = z.object({
-  props: z.array(z.record(z.string(), TheoTokenEntrySchema)),
+  props: z.record(z.string(), TheoTokenEntrySchema),
   global: z.object({
     meta: z.object({
       source: z.string(),
@@ -297,8 +297,15 @@ export const PlasmicTokensConfigSchema = z.object({
   tokensFilePath: z.string(),
 });
 
+export const PlasmicVariantGroupSchema = z.object({
+  name: z.string(),
+  projectId: z.string().optional(),
+  uuid: z.string().optional(),
+});
+export type PlasmicVariantGroup = z.infer<typeof PlasmicVariantGroupSchema>;
+
 export const PlasmicGlobalVariantsConfigSchema = z.object({
-  variantGroups: z.array(z.unknown()),
+  variantGroups: z.array(PlasmicVariantGroupSchema),
 });
 
 export const PlasmicJsonSchema = z.object({
@@ -309,7 +316,7 @@ export const PlasmicJsonSchema = z.object({
   tokens: PlasmicTokensConfigSchema,
   srcDir: z.string(),
   defaultPlasmicDir: z.string(),
-  projects: z.array(z.unknown()),
+  projects: z.array(PlasmicProjectSchema),
   globalVariants: PlasmicGlobalVariantsConfigSchema,
   wrapPagesWithGlobalContexts: z.boolean(),
   preserveJsImportExtensions: z.boolean(),
