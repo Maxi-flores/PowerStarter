@@ -331,7 +331,11 @@ function renderSchema(schema) {
 function renderSection(sec, schemas) {
   let md = `\n---\n\n## ${sec.num}. ${sec.title}\n`;
   if (sec.source?.length) md += `\n> **Source:** ${sec.source.map(s => `\`${s}\``).join(", ")}\n`;
-  for (const note of (sec.notes ?? [])) md += `>\n> ${note}\n`;
+  for (const note of (sec.notes ?? [])) {
+    // Only emit the blank blockquote continuation line when there was already a source line
+    if (sec.source?.length || md.endsWith(">\n")) md += `>\n`;
+    md += `> ${note}\n`;
+  }
   for (const schema of schemas) md += renderSchema(schema);
   return md;
 }

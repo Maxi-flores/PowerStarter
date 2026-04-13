@@ -395,7 +395,6 @@ Page metadata embedded in the exported PlasmicHomepage object
 ---
 
 ## 13. Top-level Infrastructure Schema
->
 > Complete catalog of the PowerStarter monorepo's current surface area
 
 ### `InfrastructureSchema`
